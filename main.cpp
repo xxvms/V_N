@@ -95,6 +95,7 @@ public:
                 std::cout << "-----------------" << '\n';
             } else{
                 std::cout << "User don't have any books! \n";
+                std::cout << "Go get some :) \n";
             }
         }
     }
@@ -156,6 +157,10 @@ int main() {
             case '6': {
                 person.Print();
                 break;
+            }
+            default:
+            {
+                std::cout << "so good its Friday :)  \n";
             }
 
 
