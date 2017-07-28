@@ -45,12 +45,20 @@ public:
     }
     void const Print() // done
     {
+        std::cout << "Capacity: " << shelf_with_books.capacity() << " size: " << shelf_with_books.size() << '\n';
         unsigned int i = 0;
         for (auto &shelf_with_book : shelf_with_books) {
             std::cout << '\n';
-            std::cout << "Book ID: " << i << '\n';
-            shelf_with_book->printB();
-            i++;
+            if (shelf_with_book != nullptr)
+            {
+                std::cout << "Book ID: " << i << '\n';
+                shelf_with_book->printB();
+                i++;
+            } else {
+                std::cout << "Book ID: " << i << '\n';
+                std::cout << "Book is borrowed \n";
+                i++;
+            }
             std::cout << "-----------------" << '\n';
         }
     }
@@ -67,8 +75,7 @@ public:
     }*/
     void Borrow(std::unique_ptr<Book> book)
     {
-        user_books.push_back(book);
-
+        user_books.push_back(std::move(book));
     }
     void Return()
     {
@@ -76,13 +83,19 @@ public:
     }
     void const Print() // done
     {
+        std::cout << "Capacity: " << user_books.capacity() << " size: " << user_books.size() << '\n';
         unsigned int i = 0;
         for (auto &user_book : user_books) {
-            std::cout << '\n';
-            std::cout << "Book ID: " << i << '\n';
-            user_book->printB();
-            i++;
-            std::cout << "-----------------" << '\n';
+            if (user_book != nullptr)
+            {
+                std::cout << '\n';
+                std::cout << "Book ID: " << i << '\n';
+                user_book->printB();
+                i++;
+                std::cout << "-----------------" << '\n';
+            } else{
+                std::cout << "User don't have any books! \n";
+            }
         }
     }
 };
@@ -128,17 +141,23 @@ int main() {
             }
             case '3': {
                 std::cout << "Please select book to borrow: ";
+                lib.Print();
                 unsigned int book_selection = 0;
                 std::cin >> book_selection;
                 std::unique_ptr<Book> borrow_book_ptr = lib.Borrow(book_selection);
                 person.Borrow(std::move(borrow_book_ptr));
+                break;
             }
             case '5': {
+                std::cout << "Printing books in Library\n";
                 lib.Print();
+                break;
             }
             case '6': {
                 person.Print();
+                break;
             }
+
 
         }
     } while (menu() != '9');
