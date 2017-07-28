@@ -35,9 +35,9 @@ public:
     {
         shelf_with_books.push_back(std::move(bk));
     }
-    void Borrow(unsigned int book_selection)
+   std::unique_ptr<Book> Borrow(unsigned int book_selection)
     {
-        std::move(shelf_with_books.at(book_selection));
+        return std::move(shelf_with_books.at(book_selection));
     }
     void Return()
     {
@@ -60,13 +60,14 @@ class Person
 private:
     std::vector<std::unique_ptr<Book>> user_books;
 public:
-    void Reserve(unsigned int size, std::unique_ptr<Book> bk) // not sure if I will need this at all
+   /* void Reserve(unsigned int size, std::unique_ptr<Book> bk) // not sure if I will need this at all
     {
         user_books.reserve(size);
         user_books.push_back(std::move(bk));
-    }
-    void Borrow()
+    }*/
+    void Borrow(std::unique_ptr<Book> book)
     {
+        user_books.push_back(book);
 
     }
     void Return()
@@ -129,9 +130,8 @@ int main() {
                 std::cout << "Please select book to borrow: ";
                 unsigned int book_selection = 0;
                 std::cin >> book_selection;
-                lib.Borrow(book_selection);
-
-
+                std::unique_ptr<Book> borrow_book_ptr = lib.Borrow(book_selection);
+                person.Borrow(std::move(borrow_book_ptr));
             }
             case '5': {
                 lib.Print();
