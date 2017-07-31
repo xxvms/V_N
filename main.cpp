@@ -37,11 +37,12 @@ public:
     }
    std::unique_ptr<Book> Borrow(unsigned int book_selection)
     {
+
         return std::move(shelf_with_books.at(book_selection));
     }
-    void Return()
+    void Return(std::unique_ptr<Book> book)
     {
-
+        shelf_with_books.push_back(std::move(book));
     }
     void const Print() // done
     {
@@ -68,18 +69,13 @@ class Person
 private:
     std::vector<std::unique_ptr<Book>> user_books;
 public:
-   /* void Reserve(unsigned int size, std::unique_ptr<Book> bk) // not sure if I will need this at all
-    {
-        user_books.reserve(size);
-        user_books.push_back(std::move(bk));
-    }*/
     void Borrow(std::unique_ptr<Book> book)
     {
         user_books.push_back(std::move(book));
     }
-    void Return()
+    std::unique_ptr<Book> Return(unsigned int book_selection)
     {
-
+        return std::move(user_books.at(book_selection));
     }
     void const Print() // done
     {
@@ -106,16 +102,16 @@ char menu();
 int main() {
     Library lib;
     Person person;
-
+    bool shouldExit = true;
     do {
         switch (menu()) {
             case '1': {
+                std::system("clear");
                 std::cout << "Max amount books in Library: ";
                 unsigned int librarySize = 0;
                 std::cin >> librarySize;
                 lib.Reserve(librarySize);
                 std::cout << '\n';
-                std::system("clear");
                 std::cout << "library can store " << librarySize << " books\n";
                 std::cout << '\n';
                 break;
@@ -128,16 +124,17 @@ int main() {
                     std::string author, title;
                     int publication_year = 0;
                     std::cout << "ID " << i << '\n';
-                    std::cout << "Author: ";
-                    std::cin >> author;
                     std::cout << "Title: ";
                     std::cin >> title;
+                    std::cout << "Author: ";
+                    std::cin >> author;
                     std::cout << "Publication year: ";
                     std::cin >> publication_year;
                     std::unique_ptr<Book> book_ptr = std::make_unique<Book>(title, author, publication_year);
                     lib.Add(std::move(book_ptr));
                     std::cout << '\n';
                 }
+                std::system("clear");
                 break;
             }
             case '3': {
@@ -145,34 +142,53 @@ int main() {
                 lib.Print();
                 unsigned int book_selection = 0;
                 std::cin >> book_selection;
-                std::unique_ptr<Book> borrow_book_ptr = lib.Borrow(book_selection);
-                person.Borrow(std::move(borrow_book_ptr));
+                std::system("clear");
+                //if (lib.Borrow(book_selection) != nullptr)
+                {
+                    std::unique_ptr<Book> borrow_book_ptr = lib.Borrow(book_selection);
+                    person.Borrow(std::move(borrow_book_ptr));
+                    }// else{
+                 //   std::cout << "This book is already borrowed!\n";
+                //}
+                break;
+            }
+            case '4': {
+                std::cout << "Please select book to return: ";
+                person.Print();
+                unsigned int book_selection = 0;
+                std::cin >> book_selection;
+                std::unique_ptr<Book>return_book_ptr = person.Return(book_selection);
+                lib.Return(std::move(return_book_ptr));
+                std::system("clear");
                 break;
             }
             case '5': {
+                std::system("clear");
                 std::cout << "Printing books in Library\n";
                 lib.Print();
                 break;
             }
             case '6': {
+                std::system("clear");
                 person.Print();
+                break;
+            }
+            case '9': {
+                shouldExit = false;
                 break;
             }
             default:
             {
+                std::system("clear");
                 std::cout << "so good its Friday :)  \n";
             }
-
-
         }
-    } while (menu() != '9');
-
-
+    } while (shouldExit);
     return 0;
 }
 
 char menu() {
-    char choice{' '};
+    char choice {' '};
     std::cout << "Please make your selection\n";
     std::cout << "Press number: \n";
     std::cout << "1 - Set size of the Library\n";
