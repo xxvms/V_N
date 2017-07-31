@@ -27,6 +27,10 @@ class Library
 private:
     std::vector<std::unique_ptr<Book>> shelf_with_books;
 public:
+    bool avialable(unsigned int book_selection) // done
+    {
+        return shelf_with_books.size() > book_selection and shelf_with_books.at(book_selection) != nullptr;
+    }
     void Reserve(unsigned int size) // done
     {
         shelf_with_books.reserve(size);
@@ -37,7 +41,6 @@ public:
     }
    std::unique_ptr<Book> Borrow(unsigned int book_selection)
     {
-
         return std::move(shelf_with_books.at(book_selection));
     }
     void Return(std::unique_ptr<Book> book)
@@ -46,7 +49,7 @@ public:
     }
     void const Print() // done
     {
-        std::cout << "Capacity: " << shelf_with_books.capacity() << " size: " << shelf_with_books.size() << '\n';
+        std::cout << "Capacity: " << shelf_with_books.capacity() << " size: " << shelf_with_books.size() << '\n'; //todo delete this at the end!!!!!1
         unsigned int i = 0;
         for (auto &shelf_with_book : shelf_with_books) {
             std::cout << '\n';
@@ -138,18 +141,18 @@ int main() {
                 break;
             }
             case '3': {
-                std::cout << "Please select book to borrow: ";
+                std::cout << "Please select book to borrow: \n";
                 lib.Print();
                 unsigned int book_selection = 0;
                 std::cin >> book_selection;
                 std::system("clear");
-                //if (lib.Borrow(book_selection) != nullptr)
+                if (lib.avialable(book_selection))
                 {
                     std::unique_ptr<Book> borrow_book_ptr = lib.Borrow(book_selection);
                     person.Borrow(std::move(borrow_book_ptr));
-                    }// else{
-                 //   std::cout << "This book is already borrowed!\n";
-                //}
+                    }else{
+                   std::cout << "This book is already borrowed!\n";
+                }
                 break;
             }
             case '4': {
