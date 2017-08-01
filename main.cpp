@@ -2,7 +2,6 @@
 #include <string>
 #include <vector>
 #include <memory>
-//#include <experimental/string_view>
 
 class Book
 {
@@ -11,9 +10,7 @@ private:
     std::string author;
     int publication_year;
 public:
-    //Book(std::experimental::string_view title, std::experimental::string_view author, int publication_year) : title(title), author(author), publication_year(publication_year)
-    //{}
-    Book(std::string title, std::string author, int publication_year) : title(title), author(author), publication_year(publication_year)
+       Book(std::string title, std::string author, int publication_year) : title(title), author(author), publication_year(publication_year)
     {}
 
     void const printB() {
@@ -41,7 +38,9 @@ public:
     }
    std::unique_ptr<Book> Borrow(unsigned int book_selection)
     {
-        return std::move(shelf_with_books.at(book_selection));
+        std::unique_ptr<Book>local_copy_book = (std::move(shelf_with_books.at(book_selection)));
+        shelf_with_books.erase(shelf_with_books.begin() + book_selection);
+        return std::move(local_copy_book);
     }
     void Return(std::unique_ptr<Book> book)
     {
@@ -49,7 +48,6 @@ public:
     }
     void const Print() // done
     {
-        std::cout << "Capacity: " << shelf_with_books.capacity() << " size: " << shelf_with_books.size() << '\n'; //todo delete this at the end!!!!!1
         unsigned int i = 0;
         for (auto &shelf_with_book : shelf_with_books) {
             std::cout << '\n';
@@ -78,11 +76,12 @@ public:
     }
     std::unique_ptr<Book> Return(unsigned int book_selection)
     {
-        return std::move(user_books.at(book_selection));
+        std::unique_ptr<Book> local_copy_book = std::move(user_books.at(book_selection));
+        user_books.erase(user_books.begin()+ book_selection);
+        return std::move(local_copy_book);
     }
     void const Print() // done
     {
-        std::cout << "Capacity: " << user_books.capacity() << " size: " << user_books.size() << '\n';
         unsigned int i = 0;
         for (auto &user_book : user_books) {
             if (user_book != nullptr)
@@ -95,6 +94,7 @@ public:
             } else{
                 std::cout << "User don't have any books! \n";
                 std::cout << "Go get some :) \n";
+                i++;
             }
         }
     }
@@ -200,7 +200,6 @@ char menu() {
     std::cout << "4 - Return book\n";
     std::cout << "5 - Print out all books\n";
     std::cout << "6 - Print books borrowed by user\n";
-   // std::cout << "7 - Print books borrowed by Librarian\n";
     std::cout << "9 - to Quit\n";
     std::cin >> choice;
 
