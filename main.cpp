@@ -2,103 +2,11 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include "Book.h"
+#include "Library.h"
+#include "Person.h"
 
-class Book
-{
-private:
-    std::string title;
-    std::string author;
-    int publication_year;
-public:
-       Book(std::string title, std::string author, int publication_year) : title(title), author(author), publication_year(publication_year)
-    {}
 
-    void const printB() {
-        std::cout << "Title: " << title << '\n';
-        std::cout << "Author: " << author << '\n';
-        std::cout << "Publication Year: " << publication_year << '\n';
-    }
-};
-class Library
-{
-private:
-    std::vector<std::unique_ptr<Book>> shelf_with_books;
-public:
-    bool avialable(unsigned int book_selection) // done
-    {
-        return shelf_with_books.size() > book_selection and shelf_with_books.at(book_selection) != nullptr;
-    }
-    void Reserve(unsigned int size) // done
-    {
-        shelf_with_books.reserve(size);
-    }
-    void Add(std::unique_ptr<Book> bk) // done
-    {
-        shelf_with_books.push_back(std::move(bk));
-    }
-   std::unique_ptr<Book> Borrow(unsigned int book_selection)
-    {
-        std::unique_ptr<Book>local_copy_book = (std::move(shelf_with_books.at(book_selection)));
-        shelf_with_books.erase(shelf_with_books.begin() + book_selection);
-        return std::move(local_copy_book);
-    }
-    void Return(std::unique_ptr<Book> book)
-    {
-        shelf_with_books.push_back(std::move(book));
-    }
-    void const Print() // done
-    {
-        unsigned int i = 0;
-        for (auto &shelf_with_book : shelf_with_books) {
-            std::cout << '\n';
-            if (shelf_with_book != nullptr)
-            {
-                std::cout << "Book ID: " << i << '\n';
-                shelf_with_book->printB();
-                i++;
-            } else {
-                std::cout << "Book ID: " << i << '\n';
-                std::cout << "Book is borrowed \n";
-                i++;
-            }
-            std::cout << "-----------------" << '\n';
-        }
-    }
-};
-class Person
-{
-private:
-    std::vector<std::unique_ptr<Book>> user_books;
-public:
-    void Borrow(std::unique_ptr<Book> book)
-    {
-        user_books.push_back(std::move(book));
-    }
-    std::unique_ptr<Book> Return(unsigned int book_selection)
-    {
-        std::unique_ptr<Book> local_copy_book = std::move(user_books.at(book_selection));
-        user_books.erase(user_books.begin()+ book_selection);
-        return std::move(local_copy_book);
-    }
-    void const Print() // done
-    {
-        unsigned int i = 0;
-        for (auto &user_book : user_books) {
-            if (user_book != nullptr)
-            {
-                std::cout << '\n';
-                std::cout << "Book ID: " << i << '\n';
-                user_book->printB();
-                i++;
-                std::cout << "-----------------" << '\n';
-            } else{
-                std::cout << "User don't have any books! \n";
-                std::cout << "Go get some :) \n";
-                i++;
-            }
-        }
-    }
-};
 
 char menu();
 
